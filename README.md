@@ -9,6 +9,17 @@ Express server using serverless deployed on GCP using github actions CI/CD
 * CI/CD using Github Action (lint, test, deploy)
 * Setup express server
 
+## Setup development
+### Change node version to match cloud functions's node version 
+```bash
+$ nvm use
+```
+### Install node packge 
+```bash
+$ npm install
+```
+
+
 ## Tutorial (Step by step)
 
 ### Bootstrap app using google-nodejs template
@@ -16,3 +27,15 @@ Express server using serverless deployed on GCP using github actions CI/CD
 $ mkdir serverless-typescript-gcp && $_
 $ npx serverless create --template google-nodejs
 ``` 
+
+### Bootstrap app using google-nodejs template
+make node version same as gcp cloud functions version
+
+#### create .nvmrc file
+```bash
+$ touch .nvmrc 
+```
+#### add following in file
+```
+v10.16.2
+```
