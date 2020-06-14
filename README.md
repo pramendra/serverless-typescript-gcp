@@ -18,7 +18,15 @@ $ nvm use
 ```bash
 $ npm install
 ```
+### Build using typescript 
+```bash
+npm run build
+```
 
+### Format code 
+```bash
+npm run format
+```
 
 ## Tutorial (Step by step)
 
@@ -130,3 +138,56 @@ add following .gitignore
 ```
 
 #### Refactor src/index.ts to support typescript
+
+### Setup code formatting using prettier
+
+#### Install dev dependencies
+```bash 
+$ npm i -D prettier
+``` 
+#### configure prettier 
+
+create .prettierrc.json with following content
+```
+{
+  "semi": true,
+  "trailingComma": "es5",
+  "singleQuote": true,
+  "printWidth": 80,
+  "tabWidth": 2,
+  "quoteProps": "as-needed",
+  "bracketSpacing": true,
+  "arrowParens": "always"
+}
+```
+
+#### configure vscode to auto format on same
+create .vscode/settings.json with fllowing details
+```
+{
+  "eslint.enable": true,
+  "[typescript]": {
+    "editor.formatOnSave": true
+  },
+  "javascript.validate.enable": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "node_modules/": true,
+    "build/": true,
+    ".nyc_output": true,
+    "npm": true
+  }
+}
+```
+
+#### configure npm cli to format code
+update package.json as follows 
+```
+  "scripts": {
+    "build": "tsc",
+    "dev:watch": "tsc -w",
+    "format": "prettier --write src",
+    ...
+```
+
