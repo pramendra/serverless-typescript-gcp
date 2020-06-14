@@ -624,3 +624,60 @@ create following files
           --project ${{ secrets.GCP_PROJECT }} \
           --region ${{ secrets.GCP_REGION }}
 ```
+
+## Setup express server
+
+### install express
+
+```bash
+$ npm i express
+$ npm i -D @types/express supertest
+```
+
+### Update function to support express
+
+update index.ts as follows
+
+```
+import express from 'express';
+
+const routeMain = express.Router({});
+
+routeMain.get('/', function (req: any, res: any) {
+  res.status(200).send('Hello World!');
+});
+
+routeMain.get('/webhook', function (req: any, res: any) {
+  res.status(200).send('webhook');
+});
+
+export const http = routeMain;
+```
+
+### Update test to test express function
+
+update tests/index.test.ts as follows
+
+```
+const request = require('supertest');
+const index = require('../src/index');
+const express = require('express');
+
+const app = express();
+app.use('/', index.http);
+
+describe('GET /', () => {
+ it('responds Hello World!', async (done) => {
+   await request(app).get('/').expect(200, 'Hello World!');
+   done();
+ });
+});
+
+describe('GET /webhook', () => {
+ it('responds webhook', async (done) => {
+   await request(app).get('/webhook').expect(200, 'webhook');
+   done();
+ });
+});
+
+```

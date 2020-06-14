@@ -1,11 +1,20 @@
-import { Request } from 'jest-express/lib/request';
-import { Response } from 'jest-express/lib/response';
+const request = require('supertest');
 const index = require('../src/index');
+const express = require('express');
 
-test('test http function', async () => {
-  const req: any = new Request();
-  const res: any = new Response();
-  await index.http(req, res);
-  expect(res.statusCode).toBe(200);
-  expect(res.body).toBe('Hello World!');
+const app = express();
+app.use('/', index.http);
+
+describe('GET /', () => {
+  it('responds Hello World!', async (done) => {
+    await request(app).get('/').expect(200, 'Hello World!');
+    done();
+  });
+});
+
+describe('GET /webhook', () => {
+  it('responds webhook', async (done) => {
+    await request(app).get('/webhook').expect(200, 'webhook');
+    done();
+  });
 });
