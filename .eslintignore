@@ -2,3 +2,4 @@ node_modules
 coverage
 .serverless
 .vscode
+jest.config.js
