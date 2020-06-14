@@ -420,3 +420,30 @@ test('test http function', async () => {
   expect(res.body).toBe('Hello World!');
 });
 ```
+
+## Configure nodemon to monitor changes in source and automatically restart
+
+### Install dependencies
+
+```bash
+$ npm i -D nodemon
+```
+
+### configure nodemon
+
+#### create nodemon.json with following content
+
+```
+{
+  "ignore": ["**/*.test.ts", "**/*.spec.ts", ".git", "node_modules"],
+  "watch": ["src"],
+  "exec": "npm run dev:watch",
+  "ext": "ts"
+}
+```
+
+#### update scripts in package.json
+
+```
+    "dev": "NODE_ENV=dev nodemon"
+```
