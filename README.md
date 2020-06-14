@@ -590,3 +590,37 @@ create following files
 
 - Run CI and deploy function to Cloud functions when PR is merged or code is pushed into master/dev branch
 - `service-master-function`
+
+### Make google cloud function accessible by public
+
+- By default serverless dont make deployed funciton public
+- Added job in master.yml and pull-request.yml run after deploy job
+
+```
+  deploy_public:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.16.x]
+    name: make deployment public using ${{ matrix.node-version }}
+    steps:
+      - name: Authenticate into Google Cloud Platform
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '276.0.0'
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
+
+      - name: Make function public
+        run: |
+          gcloud functions add-iam-policy-binding ${{secrets.SERVICE_NAME}}-${BRANCH_NAME}-${{secrets.SERVICE_NAME_FUNCTION}} \
+          --member="allUsers" \
+          --role="roles/cloudfunctions.invoker" \
+          --project ${{ secrets.GCP_PROJECT }} \
+          --region ${{ secrets.GCP_REGION }}
+```
