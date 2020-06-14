@@ -447,3 +447,19 @@ $ npm i -D nodemon
 ```
     "dev": "NODE_ENV=dev nodemon"
 ```
+
+## Configure coppa to emulate google cloud functions locally
+
+### Install dependencies
+
+```bash
+$ npm i -D coppa
+```
+
+### configure coppa
+
+#### update scripts in package.json
+
+```
+    "coppa:watch": "nodemon --ext js --watch .build/src --exec coppa start -- -e .build/src/index.js"
+```
