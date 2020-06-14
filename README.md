@@ -28,7 +28,7 @@ $ mkdir serverless-typescript-gcp && $_
 $ npx serverless create --template google-nodejs
 ``` 
 
-### Bootstrap app using google-nodejs template
+### Setup node version using NVM
 make node version same as gcp cloud functions version
 
 #### create .nvmrc file
@@ -38,4 +38,19 @@ $ touch .nvmrc
 #### add following in file
 ```
 v10.16.2
+```
+
+### Setup development env
+
+#### install dotenv package
+```bash 
+$ npm i -D serverless-dotenv-plugin
+```
+
+#### update following in serverless.yam
+
+```bash
+plugins:
+  - serverless-google-cloudfunctions
+  - serverless-dotenv-plugin
 ```
