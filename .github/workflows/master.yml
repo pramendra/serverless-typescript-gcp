@@ -1,0 +1,108 @@
+name: CICD on branch
+on:
+  push:
+    branches:
+      - master
+      - dev
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.16.x]
+    name: Setup, test & lint ${{ matrix.node-version }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          fetch-depth: 1
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Installing dependencies
+        run: npm install
+
+      - name: Running tests
+        run: npm run test
+
+      - name: Running lints
+        run: npm run lint
+
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.16.x]
+    name: deploying using ${{ matrix.node-version }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          fetch-depth: 1
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Installing dependencies
+        run: npm install
+      - name: Extract branch name
+        shell: bash
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
+
+      - name: Deploy function
+        run: |
+          echo -n ${{ secrets.GCP_SA_KEY }} | base64 --decode > $CREDENTIALS_PATH
+          npx serverless deploy --stage ${BRANCH_NAME}
+        env:
+          CREDENTIALS_PATH: ./keyfile.json
+          GCP_PROJECT: ${{secrets.GCP_PROJECT}}
+          GCP_REGION: ${{secrets.GCP_REGION}}
+
+  deploy_public:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.16.x]
+    name: make deployment public using ${{ matrix.node-version }}
+    steps:
+      - name: Authenticate into Google Cloud Platform
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '276.0.0'
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
+
+      - name: Make function public
+        run: |
+          gcloud functions add-iam-policy-binding ${{secrets.SERVICE_NAME}}-${BRANCH_NAME}-${{secrets.SERVICE_NAME_FUNCTION}} \
+          --member="allUsers" \
+          --role="roles/cloudfunctions.invoker" \
+          --project ${{ secrets.GCP_PROJECT }} \
+          --region ${{ secrets.GCP_REGION }}

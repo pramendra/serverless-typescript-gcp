@@ -481,3 +481,100 @@ $ npm i -D coppa
 ```
     "coppa:watch": "nodemon --ext js --watch .build/src --exec coppa start -- -e .build/src/index.js"
 ```
+
+## Setup serverless CI/CD using github actions
+
+### Goal
+
+- should be able to deploy when PR is raised
+- Shoul be able to deply when PR is merged
+- Should have unique url for testing
+
+### URL structure
+
+SERVICE-STAGE-FUNCTION
+
+#### example on master branch
+
+`xxx.cloudfunctions.net/service-master-first`
+
+#### example on PR branch
+
+`service-PR[number]-function`
+
+`xxx.cloudfunctions.net/service-pr2-first`
+
+### Configure Google cloud functions
+
+#### Create service account
+
+1. Goto https://console.cloud.google.com/iam-admin/serviceaccounts/create?project=[PROJECT-ID]&supportedpurview=project
+2. Create service account for CI/CD (eg: `github-action-cicd@[PROJECT-ID].iam.gserviceaccount.com`)
+
+#### Create service account
+
+1. Goto https://console.cloud.google.com/iam-admin/iam?authuser=1&project=[PROJECT-ID]&supportedpurview=project
+2. Click `ADD`
+3. Add members, roles to "[PROJECT-ID]" project
+4. add email `github-action-cicd@[PROJECT-ID].iam.gserviceaccount.com`
+5. with following roles
+
+```
+Cloud Build Editor
+Cloud Functions Admin
+Cloud Functions Developer
+Cloud Functions Invoker
+Deployment Manager Editor
+Service Account User
+Cloud Run Admin
+Storage Admin
+```
+
+#### Download service account
+
+1. Goto https://console.cloud.google.com/iam-admin/serviceaccounts/create?project=[PROJECT-ID]&supportedpurview=project
+2. Create key
+3. Download JSON file
+4. rename and move JSON to ~/.gcloud/keyfile.json
+
+### Configure github
+
+#### Create secretes on github
+
+https://github.com/xxx/[repo]/settings/secrets/new
+
+- GCP_PROJECT: project name from GCP
+- GCP_REGION: GCP region to deploy function
+- GCP_SA_EMAIL: Service account email
+- GCP_SA_KEY: (cat ~/.gcloud/keyfile.json | base64) encoded version of service account (downloaded from )
+- SERVICE_NAME: serverless service name
+- SERVICE_NAME_FUNCTION: serverless function name
+
+### Configure environment variables
+
+create .env with following content
+
+```
+GCP_REGION=
+GCP_PROJECT=
+CREDENTIALS_PATH=~/.gcloud/keyfile.json
+```
+
+### Update serverless configuration
+
+update serverless.yml as follows
+
+```
+  runtime: nodejs10
+  region: ${env:GCP_REGION}
+  project: ${env:GCP_PROJECT}
+  credentials: ${env:CREDENTIALS_PATH}
+```
+
+### Create Github workflows
+
+create following files
+
+1. .build/workflows/master.yml
+2. .build/workflows/pull-request-cleanup.yml
+3. .build/workflows/pull-request.yml
