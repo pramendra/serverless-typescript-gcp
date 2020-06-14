@@ -50,6 +50,24 @@ npm run lint
 npm run test:watch
 ```
 
+### Run typescript in watch mode
+
+```bash
+npm run dev
+```
+
+### Run coppa to emulate cloud functions
+
+```bash
+npm run coppa:watch
+```
+
+### Test the code in watch mode
+
+```bash
+npm run test:watch
+```
+
 ## Tutorial (Step by step)
 
 ### Bootstrap app using google-nodejs template
