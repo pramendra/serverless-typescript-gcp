@@ -28,6 +28,12 @@ npm run build
 npm run format
 ```
 
+### Lint code 
+```bash
+npm run lint
+```
+
+
 ## Tutorial (Step by step)
 
 ### Bootstrap app using google-nodejs template
@@ -191,3 +197,58 @@ update package.json as follows
     ...
 ```
 
+### Setup code linting using eslint
+
+#### install dev dependencies 
+```bash
+$ npm i -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier eslint-plugin-prettier
+```
+#### configure eslint
+create .eslintrc.json with following content
+```
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ],
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "project": "./tsconfig.json",
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-var-requires": 0
+  }
+}
+```
+
+#### setup to ignore files
+create .eslintignore with following content
+```
+node_modules
+coverage
+.serverless
+.vscode
+```
+
+#### configure npm cli to format code
+update package.json as follows 
+```
+  "scripts": {
+    "build": "tsc",
+    "dev:watch": "tsc -w",
+    "format": "prettier --write src",
+    "lint": "eslint src/**/*",
+    "lint:fix": "eslint --fix src/**/*",
+    ...
+```
