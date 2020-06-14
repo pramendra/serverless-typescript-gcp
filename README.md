@@ -8,7 +8,7 @@ Express server using serverless deployed on GCP using github actions CI/CD
 
 - Bootstrap app using google-nodejs template, nvm
 - Setup using dotenv, typescript, format, eslint, VSCode, husky, jest
-- Setup dev env using nodemon, copper and local tunnel
+- Setup dev env using nodemon, coppa
 - CI/CD using Github Action (lint, test, deploy)
 - Setup express server
 
