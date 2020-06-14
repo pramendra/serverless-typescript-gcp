@@ -68,6 +68,12 @@ npm run coppa:watch
 npm run test:watch
 ```
 
+### Deploy function
+
+```bash
+npx serverless --stage dev
+```
+
 ## Tutorial (Step by step)
 
 ### Bootstrap app using google-nodejs template
