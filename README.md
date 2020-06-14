@@ -588,5 +588,5 @@ create following files
 
 3. .build/workflows/master.yml
 
-- Run CI and deploy function to Cloud functions when PR is merged into master
+- Run CI and deploy function to Cloud functions when PR is merged or code is pushed into master/dev branch
 - `service-master-function`
