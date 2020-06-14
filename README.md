@@ -7,7 +7,7 @@ Express server using serverless deployed on GCP using github actions CI/CD
 ### Summary
 
 - Bootstrap app using google-nodejs template, nvm
-- Setup using dotenv, typescript, format, eslint, VSCode, jest, husky
+- Setup using dotenv, typescript, format, eslint, VSCode, husky, jest
 - Setup dev env using nodemon, copper and local tunnel
 - CI/CD using Github Action (lint, test, deploy)
 - Setup express server
@@ -42,6 +42,12 @@ npm run format
 
 ```bash
 npm run lint
+```
+
+### Test the code in watch mode
+
+```bash
+npm run test:watch
 ```
 
 ## Tutorial (Step by step)
@@ -325,4 +331,92 @@ $ npm i -D husky pretty-quick lint-staged
 {
   "*.ts": ["npm run lint:fix", "npm run format"]
 }
+```
+
+### setup test using jest to test typescript
+
+#### Install dev dependencies
+
+```bash
+$ npm i -D jest ts-jest @types/jest jest-express
+```
+
+#### Configure jest
+
+##### create jest.config.js with following content
+
+```
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  roots: ['<rootDir>/tests'],
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
+
+  testMatch: ['**/tests/?(*.)+(spec|test).[jt]s?(x)'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/lib/'],
+  verbose: true,
+  testURL: 'http://localhost/',
+};
+
+```
+
+##### configure eslint
+
+update .eslintrc.json as follows
+
+```
+    "env": {
+        "node": true,
+        "es6": true,
+        "jest": true,
+    },
+```
+
+##### configure typescript
+
+update tsconfig.json as follows
+
+```
+    "include": [
+      "./src/**/*",
+      "./tests/**/*",
+      "./types/**/*.ts",
+
+```
+
+##### Configure to test using npm
+
+append as follows to test code
+
+```
+  "scripts": {
+    "build": "tsc",
+    "dev:watch": "tsc -w",
+    "format": "prettier --write src",
+    "lint": "eslint src/**/*",
+    "lint:fix": "eslint --fix src/**/*",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
+    ...
+```
+
+##### setup file for test
+
+create tests/index.test.ts with following content
+
+```
+import { Request } from 'jest-express/lib/request';
+import { Response } from 'jest-express/lib/response';
+const index = require('../src/index');
+
+test('test http function', async () => {
+  const req: any = new Request();
+  const res: any = new Response();
+  await index.http(req, res);
+  expect(res.statusCode).toBe(200);
+  expect(res.body).toBe('Hello World!');
+});
 ```
