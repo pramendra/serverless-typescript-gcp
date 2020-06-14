@@ -72,6 +72,8 @@ plugins:
 ```
 
 #### configure typescript configuration
+
+create tsconfig.json with following detail
 ```
 {
   "compilerOptions": {
@@ -112,3 +114,19 @@ migrate javascript to typescript
 $ mkdir src
 $ git mv -f index.js src/index.ts
 ```
+
+#### Setup typescript build
+Update scripts in package.json as flows
+```
+  "scripts": {
+    "build": "tsc",
+    "dev:watch": "tsc -w",
+```
+
+#### Ignore typescript build
+add following .gitignore
+```
+.build
+```
+
+#### Refactor src/index.ts to support typescript
