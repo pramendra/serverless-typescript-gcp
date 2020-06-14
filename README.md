@@ -1,55 +1,70 @@
 # Serverless typescript gcp
+
 ## About the Project
-Express server using serverless deployed on GCP using github actions CI/CD 
+
+Express server using serverless deployed on GCP using github actions CI/CD
 
 ### Summary
-* Bootstrap app using google-nodejs template, nvm
-* Setup using dotenv, typescript, format, eslint, VSCode, jest, husky
-* Setup dev env using nodemon, copper and local tunnel
-* CI/CD using Github Action (lint, test, deploy)
-* Setup express server
+
+- Bootstrap app using google-nodejs template, nvm
+- Setup using dotenv, typescript, format, eslint, VSCode, jest, husky
+- Setup dev env using nodemon, copper and local tunnel
+- CI/CD using Github Action (lint, test, deploy)
+- Setup express server
 
 ## Setup development
-### Change node version to match cloud functions's node version 
+
+### Change node version to match cloud functions's node version
+
 ```bash
 $ nvm use
 ```
-### Install node packge 
+
+### Install node packge
+
 ```bash
 $ npm install
 ```
-### Build using typescript 
+
+### Build using typescript
+
 ```bash
 npm run build
 ```
 
-### Format code 
+### Format code
+
 ```bash
 npm run format
 ```
 
-### Lint code 
+### Lint code
+
 ```bash
 npm run lint
 ```
 
-
 ## Tutorial (Step by step)
 
 ### Bootstrap app using google-nodejs template
+
 ```bash
 $ mkdir serverless-typescript-gcp && $_
 $ npx serverless create --template google-nodejs
-``` 
+```
 
 ### Setup node version using NVM
+
 make node version same as gcp cloud functions version
 
 #### create .nvmrc file
+
 ```bash
-$ touch .nvmrc 
+$ touch .nvmrc
 ```
+
 #### add following in file
+
 ```
 v10.16.2
 ```
@@ -57,12 +72,15 @@ v10.16.2
 ### Setup development env
 
 #### install dotenv package
-```bash 
+
+```bash
 $ npm i -D serverless-dotenv-plugin
 ```
 
 #### configure dotenv support into serverless framework
+
 update serverless.yam as follows
+
 ```
 plugins:
   - serverless-google-cloudfunctions
@@ -72,10 +90,13 @@ plugins:
 ### Configure typescript
 
 #### install dev dependencies
+
 ```bash
 npm i -D typescript serverless-plugin-typescript @types/node @types/serverless
 ```
+
 #### configure typescript support into serverless framework
+
 update serverless.yam as follows
 
 ```
@@ -88,6 +109,7 @@ plugins:
 #### configure typescript configuration
 
 create tsconfig.json with following detail
+
 ```
 {
   "compilerOptions": {
@@ -122,15 +144,19 @@ create tsconfig.json with following detail
 }
 ```
 
-#### Create typescript file 
+#### Create typescript file
+
 migrate javascript to typescript
+
 ```bash
 $ mkdir src
 $ git mv -f index.js src/index.ts
 ```
 
 #### Setup typescript build
+
 Update scripts in package.json as flows
+
 ```
   "scripts": {
     "build": "tsc",
@@ -138,7 +164,9 @@ Update scripts in package.json as flows
 ```
 
 #### Ignore typescript build
+
 add following .gitignore
+
 ```
 .build
 ```
@@ -148,12 +176,15 @@ add following .gitignore
 ### Setup code formatting using prettier
 
 #### Install dev dependencies
-```bash 
+
+```bash
 $ npm i -D prettier
-``` 
-#### configure prettier 
+```
+
+#### configure prettier
 
 create .prettierrc.json with following content
+
 ```
 {
   "semi": true,
@@ -168,7 +199,9 @@ create .prettierrc.json with following content
 ```
 
 #### configure vscode to auto format on same
+
 create .vscode/settings.json with fllowing details
+
 ```
 {
   "eslint.enable": true,
@@ -188,7 +221,9 @@ create .vscode/settings.json with fllowing details
 ```
 
 #### configure npm cli to format code
-update package.json as follows 
+
+update package.json as follows
+
 ```
   "scripts": {
     "build": "tsc",
@@ -199,12 +234,16 @@ update package.json as follows
 
 ### Setup code linting using eslint
 
-#### install dev dependencies 
+#### install dev dependencies
+
 ```bash
 $ npm i -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier eslint-plugin-prettier
 ```
+
 #### configure eslint
+
 create .eslintrc.json with following content
+
 ```
 {
   "parser": "@typescript-eslint/parser",
@@ -233,7 +272,9 @@ create .eslintrc.json with following content
 ```
 
 #### setup to ignore files
+
 create .eslintignore with following content
+
 ```
 node_modules
 coverage
@@ -242,7 +283,9 @@ coverage
 ```
 
 #### configure npm cli to format code
-update package.json as follows 
+
+update package.json as follows
+
 ```
   "scripts": {
     "build": "tsc",
@@ -251,4 +294,35 @@ update package.json as follows
     "lint": "eslint src/**/*",
     "lint:fix": "eslint --fix src/**/*",
     ...
+```
+
+### Setup husky to format and lint staged code
+
+#### Install dependencies
+
+```
+$ npm i -D husky pretty-quick lint-staged
+```
+
+#### configure husky
+
+##### append following package.json
+
+```
+{
+  ...
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run build && npm run pretty-quick --staged && npm run lint-staged"
+    }
+  }
+}
+```
+
+##### create .lintstagedrc with following contente
+
+```
+{
+  "*.ts": ["npm run lint:fix", "npm run format"]
+}
 ```

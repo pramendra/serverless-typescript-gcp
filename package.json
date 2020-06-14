@@ -1,7 +1,23 @@
 {
   "name": "serverless-typescript-gcp",
   "version": "0.1.0",
-  "description": "",
+  "description": "Express server using serverless-framework deployed on GCP using github actions CI/CD",
+  "keywords": [
+    "nodejs",
+    "serverless",
+    "google cloud functions",
+    "nvm",
+    "dotenv",
+    "typescript",
+    "prettier",
+    "eslint",
+    "husky",
+    "vscode"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pramendra/serverless-typescript-gcp.git"
+  },
   "main": "index.js",
   "scripts": {
     "build": "tsc",
@@ -11,7 +27,7 @@
     "lint:fix": "eslint --fix src/**/*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "serverless.com",
+  "author": "Pramendra Gupta <pramendra@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^14.0.13",
@@ -21,10 +37,18 @@
     "eslint": "^7.2.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.3",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.10",
     "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1",
     "serverless-dotenv-plugin": "^2.4.2",
     "serverless-google-cloudfunctions": "*",
     "serverless-plugin-typescript": "^1.1.9",
     "typescript": "^3.9.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run build && pretty-quick --staged && lint-staged"
+    }
   }
 }
