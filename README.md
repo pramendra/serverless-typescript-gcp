@@ -182,6 +182,7 @@ $ git mv -f index.js src/index.ts
 Update scripts in package.json as flows
 
 ```
+  "main": "src/index.js",
   "scripts": {
     "build": "tsc",
     "dev:watch": "tsc -w",
@@ -500,7 +501,7 @@ SERVICE-STAGE-FUNCTION
 
 #### example on PR branch
 
-`service-PR[number]-function`
+`service-pr[number]-function`
 
 `xxx.cloudfunctions.net/service-pr2-first`
 
@@ -575,6 +576,17 @@ update serverless.yml as follows
 
 create following files
 
-1. .build/workflows/master.yml
+1. .build/workflows/pull-request.yml
+
+- Run CI and deploy function to Cloud functions once PR is raised
+- eg `service-pr[number]-function`
+
 2. .build/workflows/pull-request-cleanup.yml
-3. .build/workflows/pull-request.yml
+
+- Delete cloud function and artifacts from GCP on PR is merged
+- eg delete `service-pr[number]-function`
+
+3. .build/workflows/master.yml
+
+- Run CI and deploy function to Cloud functions when PR is merged into master
+- `service-master-function`
