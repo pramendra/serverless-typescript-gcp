@@ -47,10 +47,68 @@ v10.16.2
 $ npm i -D serverless-dotenv-plugin
 ```
 
-#### update following in serverless.yam
-
-```bash
+#### configure dotenv support into serverless framework
+update serverless.yam as follows
+```
 plugins:
   - serverless-google-cloudfunctions
   - serverless-dotenv-plugin
+```
+
+### Configure typescript
+
+#### install dev dependencies
+```bash
+npm i -D typescript serverless-plugin-typescript @types/node @types/serverless
+```
+#### configure typescript support into serverless framework
+update serverless.yam as follows
+
+```
+plugins:
+  - serverless-google-cloudfunctions
+  - serverless-dotenv-plugin
+  - serverless-plugin-typescript
+```
+
+#### configure typescript configuration
+```
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "target": "es6",
+    "outDir": ".build",
+    "lib": [
+      "es6"
+    ],
+    "sourceMap": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "resolveJsonModule": true,
+    },
+  "typeRoots": [
+    "node_modules/@types",
+    "./types"
+  ],
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "./.serverless/**/*",
+    "./.build/**/*",
+  ]
+}
+```
+
+#### Create typescript file 
+migrate javascript to typescript
+```bash
+$ mkdir src
+$ git mv -f index.js src/index.ts
 ```

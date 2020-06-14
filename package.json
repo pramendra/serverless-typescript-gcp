@@ -9,7 +9,11 @@
   "author": "serverless.com",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^14.0.13",
+    "@types/serverless": "^1.72.2",
     "serverless-dotenv-plugin": "^2.4.2",
-    "serverless-google-cloudfunctions": "*"
+    "serverless-google-cloudfunctions": "*",
+    "serverless-plugin-typescript": "^1.1.9",
+    "typescript": "^3.9.5"
   }
 }
