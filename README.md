@@ -14,16 +14,37 @@ Express server using serverless deployed on GCP using github actions CI/CD
 
 ## Setup development
 
-### Change node version to match cloud functions's node version
+### Clone repository
+
+```bash
+$ git clone git@github.com:pramendra/serverless-typescript-gcp.git
+$ cd serverless-typescript-gcp
+```
+
+### Change node version
 
 ```bash
 $ nvm use
 ```
 
-### Install node packge
+### Install dependencies
 
 ```bash
 $ npm install
+```
+
+### Run dev environment
+
+#### Run to build typescript on watch mode
+
+```bash
+$ npm run dev
+```
+
+#### Run to emulate cloud function
+
+```bash
+$ npm run coppa:watch
 ```
 
 ### Build using typescript
